@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Proyectos (JWT)</title>
+<style>
+body{font-family:system-ui,Segoe UI,Roboto,Arial;margin:40px;max-width:1050px}
+h1{margin:0 0 12px}
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:12px}
+input,select,button{padding:8px}
+table{border-collapse:collapse;width:100%}
+th,td{border:1px solid #ddd;padding:8px;vertical-align:top}
+th{background:#f6f6f6}
+.badge{padding:3px 8px;border-radius:10px;background:#eee;font-size:12px}
+.actions button{margin-right:6px}
+</style>
+</head>
+<body>
+<h1>Proyectos</h1>
+
+<div class="bar">
+  <input id="u" placeholder="usuario" style="width:160px">
+  <input id="p" type="password" placeholder="password" style="width:160px">
+  <button onclick="login()">Login</button>
+  <button onclick="logout()">Logout</button>
+  <span id="who"></span>
+  <a href="/docs" target="_blank">Swagger</a>
+</div>
+
+<div class="bar">
+  <label>Estado:
+    <select id="fEstado">
+      <option value="">(todos)</option>
+      <option>CREADO</option><option>EN_PROCESO</option><option>FINALIZADO</option>
+    </select>
+  </label>
+  <label>Desde: <input id="fDesde" type="date"></label>
+  <label>Hasta: <input id="fHasta" type="date"></label>
+  <button onclick="buscar()">Buscar</button>
+</div>
+
+<div class="bar">
+  <input id="nombre" placeholder="Nombre (obligatorio)" style="flex:1 1 260px"/>
+  <input id="descripcion" placeholder="Descripción (opcional)" style="flex:1 1 320px"/>
+  <input id="fechaInicio" type="date"/>
+  <input id="fechaFin" type="date"/>
+  <select id="estado">
+    <option>CREADO</option><option>EN_PROCESO</option><option>FINALIZADO</option>
+  </select>
+  <button onclick="crear()">Crear</button>
+</div>
+
+<table id="tbl">
+  <thead><tr>
+    <th>ID</th><th>Nombre</th><th>Descripción</th><th>Fechas</th><th>Estado</th><th>Acciones</th>
+  </tr></thead>
+  <tbody></tbody>
+</table>
+
+<script>
+const API='/api/proyectos';
+let token = localStorage.getItem('token');
+let username = localStorage.getItem('username');
+
+function setWho(){
+  document.getElementById('who').textContent = token ? `Conectado: ${username}` : 'No autenticado';
+}
+setWho();
+
+async function login(){
+  const body = { username: document.getElementById('u').value, password: document.getElementById('p').value };
+  const r = await fetch('/api/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+  if(!r.ok){ alert('Login inválido'); return; }
+  const d = await r.json(); token=d.token; username=d.username;
+  localStorage.setItem('token', token); localStorage.setItem('username', username);
+  setWho(); buscar();
+}
+function logout(){
+  token=null; username=null; localStorage.clear(); setWho();
+}
+function auth(){ return token?{'Authorization':'Bearer '+token}:{ }; }
+function fmt(d){ return d ? new Date(d).toISOString().slice(0,10) : ''; }
+
+function qs(o){ return Object.entries(o).filter(([_,v])=>v!==''&&v!=null)
+  .map(([k,v])=>`${encodeURIComponent(k)}=${encodeURIComponent(v)}`).join('&'); }
+
+async function buscar(){
+  const q = { estado: fEstado.value, desde: fDesde.value, hasta: fHasta.value, page:0, size:20, sort:'id,desc' };
+  const r = await fetch(`${API}/search?`+qs(q));
+  const data = await r.json();
+  const tb = document.querySelector('#tbl tbody'); tb.innerHTML='';
+  data.content.forEach(p=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML = `
+      <td>${p.id}</td>
+      <td>${p.nombre}</td>
+      <td>${p.descripcion??''}</td>
+      <td>Inicio: ${fmt(p.fechaInicio)||'-'}<br/>Fin: ${fmt(p.fechaFin)||'-'}</td>
+      <td><span class="badge">${p.estado}</span></td>
+      <td class="actions">
+        <button onclick="marcar(${p.id},'EN_PROCESO')">EN_PROCESO</button>
+        <button onclick="marcar(${p.id},'FINALIZADO')">FINALIZADO</button>
+        <button onclick="eliminar(${p.id})">Eliminar</button>
+      </td>`;
+    tb.appendChild(tr);
+  });
+}
+
+async function crear(){
+  if(!token) return alert('Haz login para crear');
+  const body = {
+    nombre: nombre.value.trim(),
+    descripcion: descripcion.value.trim() || null,
+    fechaInicio: fechaInicio.value || null,
+    fechaFin: fechaFin.value || null,
+    estado: estado.value
+  };
+  if(!body.nombre) return alert('Nombre obligatorio');
+  await fetch(API,{method:'POST',headers:{'Content-Type':'application/json',...auth()},body:JSON.stringify(body)});
+  buscar();
+}
+
+async function marcar(id, estado){
+  if(!token) return alert('Haz login para actualizar');
+  await fetch(`${API}/${id}`,{method:'PUT',headers:{'Content-Type':'application/json',...auth()},body:JSON.stringify({estado})});
+  buscar();
+}
+
+async function eliminar(id){
+  if(!token) return alert('Haz login para eliminar');
+  if(!confirm('¿Eliminar '+id+'?')) return;
+  await fetch(`${API}/${id}`,{method:'DELETE',headers:{...auth()}});
+  buscar();
+}
+buscar();
+</script>
+</body>
+</html>
