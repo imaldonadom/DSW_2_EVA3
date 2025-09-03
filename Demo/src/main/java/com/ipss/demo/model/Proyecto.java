@@ -1,7 +1,6 @@
 package com.ipss.demo.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
 import java.time.LocalDate;
 
 @Entity
@@ -12,20 +11,16 @@ public class Proyecto {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @NotBlank
-  @Column(nullable = false, length = 120)
   private String nombre;
 
-  @Column(length = 500)
+  @Column(length = 1000)
   private String descripcion;
 
   private LocalDate fechaInicio;
   private LocalDate fechaFin;
 
-  @Column(length = 20)
-  private String estado; // CREADO | EN_PROCESO | FINALIZADO
+  private String estado; // CREADO, EN_PROCESO, FINALIZADO
 
-  // getters / setters
   public Long getId() { return id; }
   public void setId(Long id) { this.id = id; }
   public String getNombre() { return nombre; }

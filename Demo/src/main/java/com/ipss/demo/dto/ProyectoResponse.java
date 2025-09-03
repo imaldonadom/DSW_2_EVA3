@@ -1,25 +1,38 @@
 package com.ipss.demo.dto;
 
-import com.ipss.demo.model.Proyecto;
-
 import java.time.LocalDate;
 
 public class ProyectoResponse {
-  public Long id;
-  public String nombre;
-  public String descripcion;
-  public LocalDate fechaInicio;
-  public LocalDate fechaFin;
-  public String estado;
+  private Long id;
+  private String nombre;
+  private String descripcion;
+  private LocalDate fechaInicio;
+  private LocalDate fechaFin;
+  private String estado;
 
-  public static ProyectoResponse of(Proyecto p){
-    ProyectoResponse r = new ProyectoResponse();
-    r.id = p.getId();
-    r.nombre = p.getNombre();
-    r.descripcion = p.getDescripcion();
-    r.fechaInicio = p.getFechaInicio();
-    r.fechaFin = p.getFechaFin();
-    r.estado = p.getEstado();
-    return r;
+  public ProyectoResponse() { }
+
+  public ProyectoResponse(Long id, String nombre, String descripcion,
+                          LocalDate fechaInicio, LocalDate fechaFin, String estado) {
+    this.id = id; this.nombre = nombre; this.descripcion = descripcion;
+    this.fechaInicio = fechaInicio; this.fechaFin = fechaFin; this.estado = estado;
   }
+
+  public Long getId() { return id; }
+  public void setId(Long id) { this.id = id; }
+
+  public String getNombre() { return nombre; }
+  public void setNombre(String nombre) { this.nombre = nombre; }
+
+  public String getDescripcion() { return descripcion; }
+  public void setDescripcion(String descripcion) { this.descripcion = descripcion; }
+
+  public LocalDate getFechaInicio() { return fechaInicio; }
+  public void setFechaInicio(LocalDate fechaInicio) { this.fechaInicio = fechaInicio; }
+
+  public LocalDate getFechaFin() { return fechaFin; }
+  public void setFechaFin(LocalDate fechaFin) { this.fechaFin = fechaFin; }
+
+  public String getEstado() { return estado; }
+  public void setEstado(String estado) { this.estado = estado; }
 }

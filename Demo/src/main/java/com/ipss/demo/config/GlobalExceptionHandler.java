@@ -14,21 +14,19 @@ import java.util.Map;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-  @ExceptionHandler(NotFoundException.class)
-  public ResponseEntity<?> notFound(NotFoundException ex){
-    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", ex.getMessage()));
-  }
+    @ExceptionHandler(NotFoundException.class)
+    public ResponseEntity<?> handleNotFound(NotFoundException ex) {
+        Map<String, Object> body = new HashMap<>();
+        body.put("error", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(body);
+    }
 
-  @ExceptionHandler(MethodArgumentNotValidException.class)
-  public ResponseEntity<?> validation(MethodArgumentNotValidException ex){
-    Map<String,String> errors = new HashMap<>();
-    for (FieldError e : ex.getBindingResult().getFieldErrors()) errors.put(e.getField(), e.getDefaultMessage());
-    return ResponseEntity.badRequest().body(Map.of("message","validación", "errors", errors));
-  }
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<Map<String, String>> handleValidation(MethodArgumentNotValidException ex) {
+        Map<String, String> body = new HashMap<>();
+        FieldError fe = ex.getBindingResult().getFieldError();
+        body.put("error", fe != null ? fe.getDefaultMessage() : "Solicitud inválida");
+        return ResponseEntity.badRequest().body(body);
+    }
 
-  @ExceptionHandler(Exception.class)
-  public ResponseEntity<?> generic(Exception ex){
-    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-        .body(Map.of("message","error interno", "error", ex.getClass().getSimpleName()));
-  }
 }
