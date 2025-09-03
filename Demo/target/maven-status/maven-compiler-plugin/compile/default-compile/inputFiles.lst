@@ -1,6 +1,5 @@
 C:\xampp\htdocs\DSW_2_EVA3\Demo\src\main\java\com\ipss\demo\config\DataSeeder.java
 C:\xampp\htdocs\DSW_2_EVA3\Demo\src\main\java\com\ipss\demo\config\GlobalCorsConfig.java
-C:\xampp\htdocs\DSW_2_EVA3\Demo\src\main\java\com\ipss\demo\config\GlobalExceptionHandler.java
 C:\xampp\htdocs\DSW_2_EVA3\Demo\src\main\java\com\ipss\demo\config\OpenApiConfig.java
 C:\xampp\htdocs\DSW_2_EVA3\Demo\src\main\java\com\ipss\demo\config\WebConfig.java
 C:\xampp\htdocs\DSW_2_EVA3\Demo\src\main\java\com\ipss\demo\controller\CursoController.java
@@ -13,7 +12,9 @@ C:\xampp\htdocs\DSW_2_EVA3\Demo\src\main\java\com\ipss\demo\dto\InscripcionCreat
 C:\xampp\htdocs\DSW_2_EVA3\Demo\src\main\java\com\ipss\demo\dto\ProyectoRequest.java
 C:\xampp\htdocs\DSW_2_EVA3\Demo\src\main\java\com\ipss\demo\dto\ProyectoResponse.java
 C:\xampp\htdocs\DSW_2_EVA3\Demo\src\main\java\com\ipss\demo\dto\UsuarioDTO.java
-C:\xampp\htdocs\DSW_2_EVA3\Demo\src\main\java\com\ipss\demo\exception\NotFoundException.java
+C:\xampp\htdocs\DSW_2_EVA3\Demo\src\main\java\com\ipss\demo\exception\DuplicateEmailException.java
+C:\xampp\htdocs\DSW_2_EVA3\Demo\src\main\java\com\ipss\demo\exception\GlobalExceptionHandler.java
+C:\xampp\htdocs\DSW_2_EVA3\Demo\src\main\java\com\ipss\demo\exception\ResourceNotFoundException.java
 C:\xampp\htdocs\DSW_2_EVA3\Demo\src\main\java\com\ipss\demo\model\Curso.java
 C:\xampp\htdocs\DSW_2_EVA3\Demo\src\main\java\com\ipss\demo\model\EstadoProyecto.java
 C:\xampp\htdocs\DSW_2_EVA3\Demo\src\main\java\com\ipss\demo\model\Inscripcion.java
