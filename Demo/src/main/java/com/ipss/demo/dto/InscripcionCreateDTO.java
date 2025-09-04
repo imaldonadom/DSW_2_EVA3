@@ -2,7 +2,7 @@ package com.ipss.demo.dto;
 
 import jakarta.validation.constraints.NotNull;
 
-public record InscripcionCreateDTO(
-        @NotNull Long alumnoId,
-        @NotNull Long cursoId
-) {}
+public class InscripcionCreateDTO {
+  @NotNull public Long alumnoId;
+  @NotNull public Long cursoId;
+}

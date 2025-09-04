@@ -1,7 +1,5 @@
 package com.ipss.demo.service;
 
-import com.ipss.demo.exception.DuplicateEmailException;
-import com.ipss.demo.exception.ResourceNotFoundException;
 import com.ipss.demo.model.Rol;
 import com.ipss.demo.model.Usuario;
 import com.ipss.demo.repository.UsuarioRepository;
@@ -20,53 +18,55 @@ public class UsuarioService {
         this.repo = repo;
     }
 
-    @Transactional(readOnly = true)
+    // ===== CRUD =====
+
     public List<Usuario> listar() {
         return repo.findAll();
     }
 
-    @Transactional(readOnly = true)
     public List<Usuario> listarPorRol(Rol rol) {
         return repo.findByRol(rol);
     }
 
-    @Transactional(readOnly = true)
     public Usuario buscar(Long id) {
-        return repo.findById(id)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException("Usuario no encontrado id=" + id));
+        return repo.findById(id).orElseThrow(() ->
+            new IllegalArgumentException("Usuario no encontrado id=" + id));
     }
 
     public Usuario crear(Usuario u) {
-        // normaliza email
-        if (u.getEmail() != null) {
-            u.setEmail(u.getEmail().trim().toLowerCase());
+        String email = u.getEmail() == null ? null : u.getEmail().trim();
+        if (email == null || email.isEmpty()) {
+            throw new IllegalArgumentException("Email es obligatorio");
         }
-        if (repo.existsByEmail(u.getEmail())) {
-            throw new DuplicateEmailException("Email duplicado: " + u.getEmail());
+        if (repo.existsByEmailIgnoreCase(email)) {
+            throw new IllegalArgumentException("Email duplicado: " + email);
         }
+        // normalizamos email a minúsculas si quieres
+        u.setEmail(email);
         return repo.save(u);
     }
 
     public Usuario actualizar(Long id, Usuario data) {
-        Usuario u = buscar(id); // lanza 404 si no existe
+        Usuario u = buscar(id); // lanza si no existe
 
-        // validar duplicados sólo si cambió el email
-        String email = data.getEmail() != null ? data.getEmail().trim().toLowerCase() : null;
-        if (email != null && repo.existsByEmailAndIdNot(email, id)) {
-            throw new DuplicateEmailException("Email duplicado: " + email);
+        // Validar duplicado sólo si cambió el email
+        String nuevoEmail = data.getEmail() == null ? null : data.getEmail().trim();
+        if (nuevoEmail != null && !nuevoEmail.equalsIgnoreCase(u.getEmail())) {
+            if (repo.existsByEmailIgnoreCaseAndIdNot(nuevoEmail, id)) {
+                throw new IllegalArgumentException("Email duplicado: " + nuevoEmail);
+            }
+            u.setEmail(nuevoEmail);
         }
 
         if (data.getNombre() != null) u.setNombre(data.getNombre());
-        if (email != null)           u.setEmail(email);
-        if (data.getRol() != null)   u.setRol(data.getRol());
+        if (data.getRol() != null)     u.setRol(data.getRol());
 
         return repo.save(u);
     }
 
     public void eliminar(Long id) {
         if (!repo.existsById(id)) {
-            throw new ResourceNotFoundException("Usuario no encontrado id=" + id);
+            throw new IllegalArgumentException("Usuario no encontrado id=" + id);
         }
         repo.deleteById(id);
     }

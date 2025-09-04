@@ -1,3 +1,4 @@
+// src/main/java/com/ipss/demo/config/GlobalCorsConfig.java
 package com.ipss.demo.config;
 
 import org.springframework.context.annotation.Bean;
@@ -8,17 +9,16 @@ import org.springframework.web.filter.CorsFilter;
 
 @Configuration
 public class GlobalCorsConfig {
+  @Bean
+  public CorsFilter corsFilter() {
+    CorsConfiguration cfg = new CorsConfiguration();
+    cfg.addAllowedOriginPattern("*");
+    cfg.addAllowedHeader("*");
+    cfg.addAllowedMethod("*");
+    cfg.setAllowCredentials(false);
 
-    @Bean
-    public CorsFilter corsFilter() {
-        CorsConfiguration c = new CorsConfiguration();
-        c.addAllowedOriginPattern("*");
-        c.addAllowedHeader("*");
-        c.addAllowedMethod("*");
-        c.setAllowCredentials(false);
-
-        UrlBasedCorsConfigurationSource s = new UrlBasedCorsConfigurationSource();
-        s.registerCorsConfiguration("/**", c);
-        return new CorsFilter(s);
-        }
+    UrlBasedCorsConfigurationSource src = new UrlBasedCorsConfigurationSource();
+    src.registerCorsConfiguration("/**", cfg);
+    return new CorsFilter(src);
+  }
 }

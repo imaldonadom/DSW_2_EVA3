@@ -1,5 +1,7 @@
 package com.ipss.demo.service;
 
+import com.ipss.demo.dto.InscripcionCreateDTO;
+import com.ipss.demo.dto.InscripcionResponse;
 import com.ipss.demo.model.Curso;
 import com.ipss.demo.model.Inscripcion;
 import com.ipss.demo.model.Usuario;
@@ -12,35 +14,37 @@ import java.util.List;
 
 @Service
 public class InscripcionService {
-    private final InscripcionRepository repo;
-    private final UsuarioRepository usuarioRepo;
-    private final CursoRepository cursoRepo;
+  private final InscripcionRepository repo;
+  private final UsuarioRepository usuarios;
+  private final CursoRepository cursos;
 
-    public InscripcionService(InscripcionRepository repo, UsuarioRepository usuarioRepo, CursoRepository cursoRepo) {
-        this.repo = repo;
-        this.usuarioRepo = usuarioRepo;
-        this.cursoRepo = cursoRepo;
-    }
+  public InscripcionService(InscripcionRepository repo, UsuarioRepository usuarios, CursoRepository cursos) {
+    this.repo = repo; this.usuarios = usuarios; this.cursos = cursos;
+  }
 
-    public List<Inscripcion> listar() { return repo.findAll(); }
+  public List<InscripcionResponse> listar() {
+    return repo.findAll().stream().map(i -> {
+      InscripcionResponse r = new InscripcionResponse();
+      r.id = i.getId();
+      r.alumnoId = i.getAlumno().getId();
+      r.alumnoNombre = i.getAlumno().getNombre();
+      r.cursoId = i.getCurso().getId();
+      r.cursoCodigo = i.getCurso().getCodigo();
+      r.cursoNombre = i.getCurso().getNombre();
+      return r;
+    }).toList();
+  }
 
-    public Inscripcion inscribir(Long alumnoId, Long cursoId) {
-        Usuario alumno = usuarioRepo.findById(alumnoId).orElse(null);
-        Curso curso = cursoRepo.findById(cursoId).orElse(null);
-        if (alumno == null || curso == null) return null;
-        return repo.findByAlumnoAndCurso(alumno, curso)
-                .orElseGet(() -> repo.save(new Inscripcion(alumno, curso)));
-    }
+  public InscripcionResponse crear(InscripcionCreateDTO dto) {
+    Usuario alumno = usuarios.findById(dto.alumnoId).orElseThrow();
+    Curso curso = cursos.findById(dto.cursoId).orElseThrow();
+    Inscripcion i = repo.save(new Inscripcion(alumno, curso));
+    InscripcionResponse r = new InscripcionResponse();
+    r.id = i.getId();
+    r.alumnoId = alumno.getId(); r.alumnoNombre = alumno.getNombre();
+    r.cursoId = curso.getId(); r.cursoCodigo = curso.getCodigo(); r.cursoNombre = curso.getNombre();
+    return r;
+  }
 
-    public void eliminar(Long id) { repo.deleteById(id); }
-
-    public List<Inscripcion> porAlumno(Long alumnoId) {
-        Usuario alumno = usuarioRepo.findById(alumnoId).orElse(null);
-        return alumno == null ? List.of() : repo.findByAlumno(alumno);
-    }
-
-    public List<Inscripcion> porCurso(Long cursoId) {
-        Curso curso = cursoRepo.findById(cursoId).orElse(null);
-        return curso == null ? List.of() : repo.findByCurso(curso);
-    }
+  public void eliminar(Long id) { repo.deleteById(id); }
 }

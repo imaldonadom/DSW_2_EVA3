@@ -9,15 +9,19 @@
     body { background:#f7f9fc; }
     .nav-pills .nav-link.active { background:#0d6efd; }
     .table thead th { background:#f2f4f7; }
-    .badge { letter-spacing:.3px }
     .muted { font-size:.875rem; color:#6c757d }
   </style>
 </head>
 <body>
   <div class="container py-4">
-    <div class="d-flex align-items-center justify-content-between mb-3">
+    <!-- HEADER -->
+    <div class="d-flex align-items-center justify-content-between mb-4">
       <h1 class="h3 m-0">Panel de Administración</h1>
-      <a class="btn btn-outline-secondary" href="/app.html">Ir a Proyectos</a>
+      <div class="d-flex gap-2">
+        <a class="btn btn-outline-secondary" href="/app.html">← Ir a Proyectos</a>
+        <a class="btn btn-primary" href="/practica.html">Ir a Prácticas</a>
+        <button id="btn-logout" class="btn btn-outline-danger">Cerrar sesión</button>
+      </div>
     </div>
 
     <ul class="nav nav-pills mb-3" id="tabs" role="tablist">
@@ -33,373 +37,356 @@
     </ul>
 
     <div class="tab-content">
-      <!-- ========================= USUARIOS ========================= -->
+      <!-- ============= USUARIOS ============= -->
       <div class="tab-pane fade show active" id="pane-usuarios" role="tabpanel">
         <div class="row g-3">
           <div class="col-lg-5">
-            <div class="card">
-              <div class="card-body">
-                <h5 class="card-title mb-3">Nuevo usuario</h5>
-                <div class="mb-3">
-                  <label class="form-label">Nombre</label>
-                  <input id="u-nombre" class="form-control" placeholder="Nombre" />
-                </div>
-                <div class="mb-3">
-                  <label class="form-label">Email</label>
-                  <input id="u-email" class="form-control" placeholder="email@eva3.cl" />
-                </div>
-                <div class="mb-3">
-                  <label class="form-label">Rol</label>
-                  <select id="u-rol" class="form-select">
-                    <option value="ALUMNO" selected>ALUMNO</option>
-                    <option value="PROFESOR">PROFESOR</option>
-                    <option value="ADMIN">ADMIN</option>
-                  </select>
-                </div>
-                <div class="d-flex gap-2">
-                  <button id="u-guardar" class="btn btn-primary">Guardar</button>
-                  <button id="u-nuevo" class="btn btn-outline-secondary">Nuevo</button>
-                </div>
-                <div class="mt-2 muted">• 201 crea / 200 actualiza • 409 si email duplicado • 400 validación.</div>
+            <div class="card"><div class="card-body">
+              <h5 class="card-title mb-3">Nuevo usuario</h5>
+              <div class="mb-3">
+                <label class="form-label">Nombre</label>
+                <input id="u-nombre" class="form-control" placeholder="Nombre" />
               </div>
-            </div>
+              <div class="mb-3">
+                <label class="form-label">Email</label>
+                <input id="u-email" class="form-control" placeholder="email@eva3.cl" />
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Rol</label>
+                <select id="u-rol" class="form-select">
+                  <option value="ALUMNO" selected>ALUMNO</option>
+                  <option value="PROFESOR">PROFESOR</option>
+                  <option value="ADMIN">ADMIN</option>
+                </select>
+              </div>
+              <div class="d-flex gap-2">
+                <button id="u-guardar" class="btn btn-primary">Guardar</button>
+                <button id="u-nuevo" class="btn btn-outline-secondary">Nuevo</button>
+              </div>
+              <div class="mt-2 muted">• 201 crea / 200 actualiza • 409 si email duplicado • 400 validación.</div>
+            </div></div>
           </div>
           <div class="col-lg-7">
-            <div class="card">
-              <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                  <h5 class="card-title m-0">Listado de usuarios</h5>
-                  <button id="u-refrescar" class="btn btn-sm btn-outline-secondary">Refrescar</button>
-                </div>
-                <div class="table-responsive">
-                  <table class="table align-middle">
-                    <thead>
-                      <tr><th>ID</th><th>Nombre</th><th>Email</th><th>Rol</th><th class="text-end">Acciones</th></tr>
-                    </thead>
-                    <tbody id="u-tbody"></tbody>
-                  </table>
-                </div>
+            <div class="card"><div class="card-body">
+              <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="card-title m-0">Listado de usuarios</h5>
+                <button id="u-refrescar" class="btn btn-sm btn-outline-secondary">Refrescar</button>
               </div>
-            </div>
+              <div class="table-responsive">
+                <table class="table align-middle">
+                  <thead>
+                    <tr><th>ID</th><th>Nombre</th><th>Email</th><th>Rol</th><th class="text-end">Acciones</th></tr>
+                  </thead>
+                  <tbody id="u-tbody"></tbody>
+                </table>
+              </div>
+            </div></div>
           </div>
         </div>
       </div>
 
-      <!-- ========================= CURSOS ========================= -->
+      <!-- ============= CURSOS ============= -->
       <div class="tab-pane fade" id="pane-cursos" role="tabpanel">
         <div class="row g-3">
           <div class="col-lg-5">
-            <div class="card">
-              <div class="card-body">
-                <h5 class="card-title mb-3">Nuevo curso</h5>
-                <div class="mb-3">
-                  <label class="form-label">Código</label>
-                  <input id="c-codigo" class="form-control" placeholder="DW-101" />
-                </div>
-                <div class="mb-3">
-                  <label class="form-label">Nombre</label>
-                  <input id="c-nombre" class="form-control" placeholder="Desarrollo Web I" />
-                </div>
-                <div class="d-flex gap-2">
-                  <button id="c-guardar" class="btn btn-primary">Guardar</button>
-                  <button id="c-nuevo" class="btn btn-outline-secondary">Nuevo</button>
-                </div>
-                <div class="mt-2 muted">• 201 crea / 200 actualiza • (Opcional) 409 si código duplicado.</div>
+            <div class="card"><div class="card-body">
+              <h5 class="card-title mb-3">Nuevo curso</h5>
+              <div class="mb-3">
+                <label class="form-label">Código</label>
+                <input id="c-codigo" class="form-control" placeholder="DW-101" />
               </div>
-            </div>
+              <div class="mb-3">
+                <label class="form-label">Nombre</label>
+                <input id="c-nombre" class="form-control" placeholder="Desarrollo Web I" />
+              </div>
+              <div class="d-flex gap-2">
+                <button id="c-guardar" class="btn btn-primary">Guardar</button>
+                <button id="c-nuevo" class="btn btn-outline-secondary">Nuevo</button>
+              </div>
+              <div class="mt-2 muted">• 201 crea / 200 actualiza • (Opcional) 409 si código duplicado.</div>
+            </div></div>
           </div>
           <div class="col-lg-7">
-            <div class="card">
-              <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                  <h5 class="card-title m-0">Listado de cursos</h5>
-                  <button id="c-refrescar" class="btn btn-sm btn-outline-secondary">Refrescar</button>
-                </div>
-                <div class="table-responsive">
-                  <table class="table align-middle">
-                    <thead>
-                      <tr><th>ID</th><th>Código</th><th>Nombre</th><th class="text-end">Acciones</th></tr>
-                    </thead>
-                    <tbody id="c-tbody"></tbody>
-                  </table>
-                </div>
+            <div class="card"><div class="card-body">
+              <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="card-title m-0">Listado de cursos</h5>
+                <button id="c-refrescar" class="btn btn-sm btn-outline-secondary">Refrescar</button>
               </div>
-            </div>
+              <div class="table-responsive">
+                <table class="table align-middle">
+                  <thead>
+                    <tr><th>ID</th><th>Código</th><th>Nombre</th><th class="text-end">Acciones</th></tr>
+                  </thead>
+                  <tbody id="c-tbody"></tbody>
+                </table>
+              </div>
+            </div></div>
           </div>
         </div>
       </div>
 
-      <!-- ====================== INSCRIPCIONES ====================== -->
+      <!-- ============= INSCRIPCIONES ============= -->
       <div class="tab-pane fade" id="pane-ins" role="tabpanel">
         <div class="row g-3">
           <div class="col-lg-5">
-            <div class="card">
-              <div class="card-body">
-                <h5 class="card-title mb-3">Nueva inscripción</h5>
-                <div class="mb-3">
-                  <label class="form-label">Alumno</label>
-                  <select id="i-alumno" class="form-select"></select>
-                </div>
-                <div class="mb-3">
-                  <label class="form-label">Curso</label>
-                  <select id="i-curso" class="form-select"></select>
-                </div>
-                <button id="i-guardar" class="btn btn-primary">Inscribir</button>
-                <div class="mt-2 muted">• 201 crea • 409 si alumno ya está inscrito en el curso.</div>
+            <div class="card"><div class="card-body">
+              <h5 class="card-title mb-3">Nueva inscripción</h5>
+              <div class="mb-3">
+                <label class="form-label">Alumno</label>
+                <select id="i-alumno" class="form-select"></select>
               </div>
-            </div>
+              <div class="mb-3">
+                <label class="form-label">Curso</label>
+                <select id="i-curso" class="form-select"></select>
+              </div>
+              <button id="i-guardar" class="btn btn-primary">Inscribir</button>
+              <div class="mt-2 muted">• 201 crea • 409 si alumno ya está inscrito en el curso.</div>
+            </div></div>
           </div>
           <div class="col-lg-7">
-            <div class="card">
-              <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                  <h5 class="card-title m-0">Listado de inscripciones</h5>
-                  <button id="i-refrescar" class="btn btn-sm btn-outline-secondary">Refrescar</button>
-                </div>
-                <div class="table-responsive">
-                  <table class="table align-middle">
-                    <thead>
-                      <tr><th>ID</th><th>Alumno</th><th>Curso</th><th class="text-end">Acciones</th></tr>
-                    </thead>
-                    <tbody id="i-tbody"></tbody>
-                  </table>
-                </div>
+            <div class="card"><div class="card-body">
+              <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="card-title m-0">Listado de inscripciones</h5>
+                <button id="i-refrescar" class="btn btn-sm btn-outline-secondary">Refrescar</button>
               </div>
-            </div>
+              <div class="table-responsive">
+                <table class="table align-middle">
+                  <thead>
+                    <tr><th>ID</th><th>Alumno</th><th>Curso</th><th class="text-end">Acciones</th></tr>
+                  </thead>
+                  <tbody id="i-tbody"></tbody>
+                </table>
+              </div>
+            </div></div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Alertas -->
     <div id="alert-holder" class="position-fixed bottom-0 end-0 p-3" style="z-index:1080"></div>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-  
-  <script>
-  // ====================== Helper fetch con manejo de errores ======================
-  async function fetchJSON(url, options = {}) {
-    const res = await fetch(url, {
-      headers: Object.assign({ 'Content-Type': 'application/json' }, (options.headers || {})),
-      method: options.method || 'GET',
-      body: options.body || undefined
-    });
-    if (res.status === 204) return null;
-    let data = {};
-    try { data = await res.json(); } catch(e) { data = {}; }
-    if (!res.ok) {
-      const msg = (data && data.error) ? data.error : ('HTTP ' + res.status);
-      throw new Error(msg);
+
+  <script type="module">
+    import { requireAnyRole, logout } from './js/session.js';
+
+    // Solo ADMIN
+    requireAnyRole('ADMIN');
+    document.getElementById('btn-logout').addEventListener('click', logout);
+
+    async function fetchJSON(url, options = {}) {
+      const res = await fetch(url, {
+        headers: Object.assign({ 'Content-Type': 'application/json' }, (options.headers || {})),
+        method: options.method || 'GET',
+        body: options.body || undefined
+      });
+      if (res.status === 204) return null;
+      let data = {};
+      try { data = await res.json(); } catch(e) { data = {}; }
+      if (!res.ok) throw new Error((data && data.error) ? data.error : ('HTTP ' + res.status));
+      return data;
     }
-    return data;
-  }
 
-  var alertHolder = document.getElementById('alert-holder');
-  function toast(msg, type) {
-    if (!type) type = 'success';
-    var el = document.createElement('div');
-    el.className = 'alert alert-' + type + ' shadow-sm';
-    el.textContent = msg;
-    alertHolder.appendChild(el);
-    setTimeout(function(){ el.remove(); }, 3000);
-  }
-
-  // ====================== USUARIOS ======================
-  var uEditingId = null;
-  var uNombre = document.getElementById('u-nombre');
-  var uEmail  = document.getElementById('u-email');
-  var uRol    = document.getElementById('u-rol');
-  var uTbody  = document.getElementById('u-tbody');
-
-  async function loadUsuarios() {
-    var list = await fetchJSON('/api/usuarios');
-    uTbody.innerHTML = list.map(function(u){
-      return '<tr>'
-        + '<td>' + u.id + '</td>'
-        + '<td>' + u.nombre + '</td>'
-        + '<td>' + u.email + '</td>'
-        + '<td><span class="badge text-bg-light">' + u.rol + '</span></td>'
-        + '<td class="text-end">'
-        +   '<button class="btn btn-sm btn-outline-primary me-2" onclick="editUsuario(' + u.id + ')">Editar</button>'
-        +   '<button class="btn btn-sm btn-outline-danger" onclick="delUsuario(' + u.id + ')">Borrar</button>'
-        + '</td>'
-        + '</tr>';
-    }).join('');
-  }
-
-  window.editUsuario = async function(id){
-    var u = await fetchJSON('/api/usuarios/' + id);
-    uEditingId = id;
-    uNombre.value = u.nombre;
-    uEmail.value  = u.email;
-    uRol.value    = u.rol;
-    document.getElementById('u-guardar').textContent = 'Actualizar';
-  };
-
-  window.delUsuario = async function(id){
-    if (!confirm('¿Borrar usuario #' + id + '?')) return;
-    await fetchJSON('/api/usuarios/' + id, { method:'DELETE' });
-    toast('Usuario borrado');
-    loadUsuarios();
-  };
-
-  document.getElementById('u-guardar').addEventListener('click', async function(){
-    var body = JSON.stringify({
-      nombre: uNombre.value.trim(),
-      email:  uEmail.value.trim(),
-      rol:    uRol.value
-    });
-    try {
-      if (uEditingId) {
-        await fetchJSON('/api/usuarios/' + uEditingId, { method:'PUT', body: body });
-        toast('Usuario actualizado');
-      } else {
-        await fetchJSON('/api/usuarios', { method:'POST', body: body });
-        toast('Usuario creado');
-      }
-      document.getElementById('u-nuevo').click();
-      loadUsuarios();
-    } catch (e) { toast(e.message, 'danger'); }
-  });
-
-  document.getElementById('u-nuevo').addEventListener('click', function(){
-    uEditingId = null;
-    uNombre.value = '';
-    uEmail.value  = '';
-    uRol.value    = 'ALUMNO';
-    document.getElementById('u-guardar').textContent = 'Guardar';
-  });
-
-  document.getElementById('u-refrescar').addEventListener('click', loadUsuarios);
-
-  // ====================== CURSOS ======================
-  var cEditingId = null;
-  var cCodigo = document.getElementById('c-codigo');
-  var cNombre = document.getElementById('c-nombre');
-  var cTbody  = document.getElementById('c-tbody');
-
-  async function loadCursos() {
-    var list = await fetchJSON('/api/cursos');
-    cTbody.innerHTML = list.map(function(c){
-      return '<tr>'
-        + '<td>' + c.id + '</td>'
-        + '<td>' + c.codigo + '</td>'
-        + '<td>' + c.nombre + '</td>'
-        + '<td class="text-end">'
-        +   '<button class="btn btn-sm btn-outline-primary me-2" onclick="editCurso(' + c.id + ')">Editar</button>'
-        +   '<button class="btn btn-sm btn-outline-danger" onclick="delCurso(' + c.id + ')">Borrar</button>'
-        + '</td>'
-        + '</tr>';
-    }).join('');
-  }
-
-  window.editCurso = async function(id){
-    var c = await fetchJSON('/api/cursos/' + id);
-    cEditingId = id;
-    cCodigo.value = c.codigo;
-    cNombre.value = c.nombre;
-    document.getElementById('c-guardar').textContent = 'Actualizar';
-  };
-
-  window.delCurso = async function(id){
-    if (!confirm('¿Borrar curso #' + id + '?')) return;
-    await fetchJSON('/api/cursos/' + id, { method:'DELETE' });
-    toast('Curso borrado');
-    loadCursos();
-    loadAlumnosYCursos();
-  };
-
-  document.getElementById('c-guardar').addEventListener('click', async function(){
-    var body = JSON.stringify({ codigo: cCodigo.value.trim(), nombre: cNombre.value.trim() });
-    try {
-      if (cEditingId) {
-        await fetchJSON('/api/cursos/' + cEditingId, { method:'PUT', body: body });
-        toast('Curso actualizado');
-      } else {
-        await fetchJSON('/api/cursos', { method:'POST', body: body });
-        toast('Curso creado');
-      }
-      document.getElementById('c-nuevo').click();
-      loadCursos();
-      loadAlumnosYCursos();
-    } catch (e) { toast(e.message, 'danger'); }
-  });
-
-  document.getElementById('c-nuevo').addEventListener('click', function(){
-    cEditingId = null;
-    cCodigo.value = '';
-    cNombre.value = '';
-    document.getElementById('c-guardar').textContent = 'Guardar';
-  });
-
-  document.getElementById('c-refrescar').addEventListener('click', loadCursos);
-
-  // ====================== INSCRIPCIONES ======================
-  var iAlumno = document.getElementById('i-alumno');
-  var iCurso  = document.getElementById('i-curso');
-  var iTbody  = document.getElementById('i-tbody');
-
-  async function loadAlumnosYCursos() {
-    var alumnos = [];
-    try {
-      alumnos = await fetchJSON('/api/usuarios/rol/ALUMNO');
-    } catch(e) {
-      var all = await fetchJSON('/api/usuarios');
-      alumnos = all.filter(function(a){ return a.rol === 'ALUMNO'; });
+    const alertHolder = document.getElementById('alert-holder');
+    function toast(msg, type='success') {
+      const el = document.createElement('div');
+      el.className = 'alert alert-' + type + ' shadow-sm';
+      el.textContent = msg;
+      alertHolder.appendChild(el);
+      setTimeout(() => el.remove(), 3000);
     }
-    var cursos = await fetchJSON('/api/cursos');
 
-    iAlumno.innerHTML = alumnos.map(function(a){
-      return '<option value="' + a.id + '">' + a.nombre + ' (' + a.email + ')</option>';
-    }).join('');
+    // ====== USUARIOS ======
+    let uEditingId = null;
+    const uNombre = document.getElementById('u-nombre');
+    const uEmail  = document.getElementById('u-email');
+    const uRol    = document.getElementById('u-rol');
+    const uTbody  = document.getElementById('u-tbody');
 
-    iCurso.innerHTML = cursos.map(function(c){
-      return '<option value="' + c.id + '">' + c.codigo + ' - ' + c.nombre + '</option>';
-    }).join('');
-  }
+    async function loadUsuarios() {
+      const list = await fetchJSON('/api/usuarios');
+      uTbody.innerHTML = list.map(u => `
+        <tr>
+          <td>${u.id}</td>
+          <td>${u.nombre}</td>
+          <td>${u.email}</td>
+          <td><span class="badge text-bg-light">${u.rol}</span></td>
+          <td class="text-end">
+            <button class="btn btn-sm btn-outline-primary me-2" data-edit="${u.id}">Editar</button>
+            <button class="btn btn-sm btn-outline-danger" data-del="${u.id}">Borrar</button>
+          </td>
+        </tr>`).join('');
+    }
 
-  async function loadInscripciones() {
-    var list = await fetchJSON('/api/inscripciones');
-    iTbody.innerHTML = list.map(function(x){
-      var id = x.id;
-      var alumnoNombre = (x.alumno && x.alumno.nombre) ? x.alumno.nombre :
-                         (x.alumnoNombre ? x.alumnoNombre : ('#' + x.alumnoId));
-      var cursoNombre  = (x.curso ? (x.curso.codigo + ' - ' + x.curso.nombre) :
-                         (x.cursoCodigo ? (x.cursoCodigo + ' - ' + x.cursoNombre) : ('#' + x.cursoId)));
-      return '<tr>'
-        + '<td>' + id + '</td>'
-        + '<td>' + alumnoNombre + '</td>'
-        + '<td>' + cursoNombre + '</td>'
-        + '<td class="text-end">'
-        +   '<button class="btn btn-sm btn-outline-danger" onclick="delIns(' + id + ')">Borrar</button>'
-        + '</td>'
-        + '</tr>';
-    }).join('');
-  }
+    uTbody.addEventListener('click', async (e)=>{
+      const idEdit = e.target.getAttribute('data-edit');
+      const idDel  = e.target.getAttribute('data-del');
+      if (idEdit){
+        const u = await fetchJSON('/api/usuarios/' + idEdit);
+        uEditingId = u.id;
+        uNombre.value = u.nombre;
+        uEmail.value  = u.email;
+        uRol.value    = u.rol;
+        document.getElementById('u-guardar').textContent = 'Actualizar';
+      }
+      if (idDel){
+        if(!confirm('¿Borrar usuario #' + idDel + '?')) return;
+        await fetchJSON('/api/usuarios/' + idDel, { method:'DELETE' });
+        toast('Usuario borrado');
+        loadUsuarios();
+      }
+    });
 
-  window.delIns = async function(id){
-    if (!confirm('¿Borrar inscripción #' + id + '?')) return;
-    await fetchJSON('/api/inscripciones/' + id, { method:'DELETE' });
-    toast('Inscripción borrada');
-    loadInscripciones();
-  };
+    document.getElementById('u-guardar').addEventListener('click', async ()=>{
+      const body = JSON.stringify({
+        nombre: uNombre.value.trim(),
+        email:  uEmail.value.trim(),
+        rol:    uRol.value
+      });
+      try{
+        if(uEditingId){
+          await fetchJSON('/api/usuarios/' + uEditingId, { method:'PUT', body });
+          toast('Usuario actualizado');
+        }else{
+          await fetchJSON('/api/usuarios', { method:'POST', body });
+          toast('Usuario creado');
+        }
+        document.getElementById('u-nuevo').click();
+        loadUsuarios();
+      }catch(e){ toast(e.message, 'danger'); }
+    });
 
-  document.getElementById('i-guardar').addEventListener('click', async function(){
-    var body = JSON.stringify({ alumnoId: Number(iAlumno.value), cursoId: Number(iCurso.value) });
-    try {
-      await fetchJSON('/api/inscripciones', { method:'POST', body: body });
-      toast('Inscripción creada');
-      loadInscripciones();
-    } catch (e) { toast(e.message, 'danger'); }
-  });
+    document.getElementById('u-nuevo').addEventListener('click', ()=>{
+      uEditingId = null;
+      uNombre.value = '';
+      uEmail.value  = '';
+      uRol.value    = 'ALUMNO';
+      document.getElementById('u-guardar').textContent = 'Guardar';
+    });
 
-  document.getElementById('i-refrescar').addEventListener('click', loadInscripciones);
+    document.getElementById('u-refrescar').addEventListener('click', loadUsuarios);
 
-  // ====================== INIT ======================
-  (async function init(){
-    await Promise.all([loadUsuarios(), loadCursos()]);
-    await loadAlumnosYCursos();
-    await loadInscripciones();
-  })();
-</script>
+    // ====== CURSOS ======
+    let cEditingId = null;
+    const cCodigo = document.getElementById('c-codigo');
+    const cNombre = document.getElementById('c-nombre');
+    const cTbody  = document.getElementById('c-tbody');
+
+    async function loadCursos(){
+      const list = await fetchJSON('/api/cursos');
+      cTbody.innerHTML = list.map(c => `
+        <tr>
+          <td>${c.id}</td>
+          <td>${c.codigo}</td>
+          <td>${c.nombre}</td>
+          <td class="text-end">
+            <button class="btn btn-sm btn-outline-primary me-2" data-edit="${c.id}">Editar</button>
+            <button class="btn btn-sm btn-outline-danger" data-del="${c.id}">Borrar</button>
+          </td>
+        </tr>`).join('');
+    }
+
+    cTbody.addEventListener('click', async (e)=>{
+      const idEdit = e.target.getAttribute('data-edit');
+      const idDel  = e.target.getAttribute('data-del');
+      if(idEdit){
+        const c = await fetchJSON('/api/cursos/' + idEdit);
+        cEditingId = c.id;
+        cCodigo.value = c.codigo;
+        cNombre.value = c.nombre;
+        document.getElementById('c-guardar').textContent = 'Actualizar';
+      }
+      if(idDel){
+        if(!confirm('¿Borrar curso #' + idDel + '?')) return;
+        await fetchJSON('/api/cursos/' + idDel, { method:'DELETE' });
+        toast('Curso borrado');
+        loadCursos(); loadAlumnosYCursos();
+      }
+    });
+
+    document.getElementById('c-guardar').addEventListener('click', async ()=>{
+      const body = JSON.stringify({ codigo: cCodigo.value.trim(), nombre: cNombre.value.trim() });
+      try{
+        if(cEditingId){
+          await fetchJSON('/api/cursos/' + cEditingId, { method:'PUT', body });
+          toast('Curso actualizado');
+        }else{
+          await fetchJSON('/api/cursos', { method:'POST', body });
+          toast('Curso creado');
+        }
+        document.getElementById('c-nuevo').click();
+        loadCursos(); loadAlumnosYCursos();
+      }catch(e){ toast(e.message, 'danger'); }
+    });
+
+    document.getElementById('c-nuevo').addEventListener('click', ()=>{
+      cEditingId = null; cCodigo.value=''; cNombre.value='';
+      document.getElementById('c-guardar').textContent = 'Guardar';
+    });
+
+    document.getElementById('c-refrescar').addEventListener('click', loadCursos);
+
+    // ====== INSCRIPCIONES ======
+    const iAlumno = document.getElementById('i-alumno');
+    const iCurso  = document.getElementById('i-curso');
+    const iTbody  = document.getElementById('i-tbody');
+
+    async function loadAlumnosYCursos(){
+      let alumnos = [];
+      try { alumnos = await fetchJSON('/api/usuarios/rol/ALUMNO'); }
+      catch { alumnos = (await fetchJSON('/api/usuarios')).filter(a => a.rol==='ALUMNO'); }
+      const cursos = await fetchJSON('/api/cursos');
+
+      iAlumno.innerHTML = alumnos.map(a=> `<option value="${a.id}">${a.nombre} (${a.email})</option>`).join('');
+      iCurso.innerHTML  = cursos.map(c=> `<option value="${c.id}">${c.codigo} - ${c.nombre}</option>`).join('');
+    }
+
+    async function loadInscripciones(){
+      const list = await fetchJSON('/api/inscripciones');
+      iTbody.innerHTML = list.map(x=>{
+        const id = x.id;
+        const alumnoNombre = x.alumno?.nombre ?? x.alumnoNombre ?? `#${x.alumnoId}`;
+        const cursoNombre  = x.curso ? `${x.curso.codigo} - ${x.curso.nombre}` :
+                            (x.cursoCodigo ? `${x.cursoCodigo} - ${x.cursoNombre}` : `#${x.cursoId}`);
+        return `
+          <tr>
+            <td>${id}</td>
+            <td>${alumnoNombre}</td>
+            <td>${cursoNombre}</td>
+            <td class="text-end">
+              <button class="btn btn-sm btn-outline-danger" data-del="${id}">Borrar</button>
+            </td>
+          </tr>`;
+      }).join('');
+    }
+
+    iTbody.addEventListener('click', async (e)=>{
+      const idDel = e.target.getAttribute('data-del');
+      if(idDel){
+        if(!confirm('¿Borrar inscripción #' + idDel + '?')) return;
+        await fetchJSON('/api/inscripciones/' + idDel, { method:'DELETE' });
+        toast('Inscripción borrada');
+        loadInscripciones();
+      }
+    });
+
+    document.getElementById('i-guardar').addEventListener('click', async ()=>{
+      const body = JSON.stringify({ alumnoId:Number(iAlumno.value), cursoId:Number(iCurso.value) });
+      try{
+        await fetchJSON('/api/inscripciones', { method:'POST', body });
+        toast('Inscripción creada'); loadInscripciones();
+      }catch(e){ toast(e.message, 'danger'); }
+    });
+
+    document.getElementById('i-refrescar').addEventListener('click', loadInscripciones);
+
+    // INIT
+    (async function init(){
+      await Promise.all([loadUsuarios(), loadCursos()]);
+      await loadAlumnosYCursos();
+      await loadInscripciones();
+    })();
+  </script>
+</body>
+</html>

@@ -8,18 +8,16 @@ import java.util.List;
 
 @Service
 public class CursoService {
-    private final CursoRepository repo;
-    public CursoService(CursoRepository repo) { this.repo = repo; }
+  private final CursoRepository repo;
+  public CursoService(CursoRepository repo) { this.repo = repo; }
 
-    public List<Curso> listar() { return repo.findAll(); }
-    public Curso crear(Curso c) { return repo.save(c); }
-    public Curso buscar(Long id) { return repo.findById(id).orElse(null); }
-    public void eliminar(Long id) { repo.deleteById(id); }
-    public Curso actualizar(Long id, Curso data) {
-        return repo.findById(id).map(c -> {
-            c.setNombre(data.getNombre());
-            c.setCodigo(data.getCodigo());
-            return repo.save(c);
-        }).orElse(null);
-    }
+  public List<Curso> listar() { return repo.findAll(); }
+  public Curso crear(Curso c) { return repo.save(c); }
+  public Curso actualizar(Long id, Curso data) {
+    Curso c = repo.findById(id).orElseThrow();
+    if (data.getCodigo()!=null) c.setCodigo(data.getCodigo());
+    if (data.getNombre()!=null) c.setNombre(data.getNombre());
+    return repo.save(c);
+  }
+  public void eliminar(Long id) { repo.deleteById(id); }
 }

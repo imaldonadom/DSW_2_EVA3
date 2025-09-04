@@ -1,0 +1,319 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Gestión de Prácticas</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    .badge-role { font-weight: 600; }
+    .shadow-sm { box-shadow: 0 .125rem .25rem rgba(0,0,0,.075)!important; }
+  </style>
+</head>
+<body class="bg-light">
+  <div class="container py-4">
+    <div class="d-flex align-items-center justify-content-between mb-3">
+      <h3 class="m-0">Gestión de Prácticas</h3>
+      <div class="d-flex gap-2">
+        <a id="btn-admin" class="btn btn-outline-secondary" href="/admin.html">← Volver a Administración</a>
+        <button id="btn-logout" class="btn btn-outline-secondary">Cerrar sesión</button>
+      </div>
+    </div>
+
+    <div id="alert-holder"></div>
+
+    <div class="row g-3">
+      <div class="col-12 col-lg-5">
+        <div class="card shadow-sm">
+          <div class="card-body">
+            <h5 class="card-title">Nueva/Editar práctica</h5>
+
+            <div class="mb-2">
+              <label class="form-label">Alumno</label>
+              <select id="p-alumno" class="form-select"></select>
+            </div>
+
+            <div class="mb-2" id="grp-profesor">
+              <label class="form-label">Profesor supervisor (opcional)</label>
+              <select id="p-profesor" class="form-select"></select>
+            </div>
+
+            <div class="mb-2">
+              <label class="form-label">Carrera</label>
+              <input id="p-carrera" class="form-control" placeholder="Ej: Informática"/>
+            </div>
+
+            <div class="mb-2">
+              <label class="form-label">Descripción de actividades</label>
+              <textarea id="p-desc" class="form-control" rows="3"></textarea>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6 mb-2">
+                <label class="form-label">Fecha inicio</label>
+                <input type="date" id="p-inicio" class="form-control"/>
+              </div>
+              <div class="col-md-6 mb-2">
+                <label class="form-label">Fecha fin</label>
+                <input type="date" id="p-fin" class="form-control"/>
+              </div>
+            </div>
+
+            <div class="mb-2">
+              <label class="form-label">Empresa</label>
+              <input id="p-empresa" class="form-control" placeholder="Nombre empresa"/>
+            </div>
+            <div class="mb-2">
+              <input id="p-emp-dir" class="form-control" placeholder="Dirección (opcional)"/>
+            </div>
+            <div class="mb-2">
+              <input id="p-emp-tel" class="form-control" placeholder="Teléfono (opcional)"/>
+            </div>
+
+            <div class="mb-2">
+              <label class="form-label">Jefe directo (opcional)</label>
+              <input id="p-jefe-nom" class="form-control mb-2" placeholder="Nombre jefe directo"/>
+              <input id="p-jefe-ctc" class="form-control" placeholder="Contacto (teléfono/email)"/>
+            </div>
+
+            <div class="d-flex gap-2 mt-3">
+              <button id="btn-guardar" class="btn btn-primary">Guardar</button>
+              <button id="btn-nuevo" class="btn btn-outline-secondary">Nuevo</button>
+            </div>
+
+            <small class="text-muted d-block mt-2">
+              • 201 crea • 200 actualiza • 404 no existe • 400 validación
+            </small>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-12 col-lg-7">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <h5 class="m-0">Listado de prácticas</h5>
+          <button class="btn btn-outline-primary btn-sm" id="btn-refrescar">Refrescar</button>
+        </div>
+        <div class="card shadow-sm">
+          <div class="table-responsive">
+            <table class="table table-hover m-0">
+              <thead class="table-light">
+              <tr>
+                <th>ID</th>
+                <th>Alumno</th>
+                <th>Profesor</th>
+                <th>Empresa</th>
+                <th>Inicio</th>
+                <th>Fin</th>
+                <th id="th-acciones" style="width:140px">Acciones</th>
+              </tr>
+              </thead>
+              <tbody id="p-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<!-- ===== LÓGICA con control de sesión/roles ===== -->
+<script type="module">
+  import { requireAnyRole, logout } from './js/session.js';
+
+  // ===== sesión / rol =====
+  const user = requireAnyRole('ADMIN','PROFESOR','ALUMNO'); // redirige a login si no cumple
+  document.getElementById('btn-logout').addEventListener('click', logout);
+  // El botón volver a Administración sólo para ADMIN
+  document.getElementById('btn-admin').classList.toggle('d-none', user.rol !== 'ADMIN');
+
+  const api = {
+    usuariosRol: (rol) => `/api/usuarios/rol/${rol}`,
+    practicas: `/api/practicas`
+  };
+
+  let editId = null;
+
+  // --------- helpers ---------
+  function toast(msg, type='success') {
+    const el = document.createElement('div');
+    el.className = `alert alert-${type} shadow-sm`;
+    el.textContent = msg;
+    document.getElementById('alert-holder').appendChild(el);
+    setTimeout(()=> el.remove(), 3000);
+  }
+
+  async function fetchJSON(url, options={}) {
+    const res = await fetch(url, {
+      headers: { 'Content-Type':'application/json', ...(options.headers||{}) },
+      ...options
+    });
+    if (res.status === 204) return null;
+    const data = await res.json().catch(()=> ({}));
+    if (!res.ok) {
+      const msg = data?.error || `HTTP ${res.status}`;
+      throw new Error(msg);
+    }
+    return data;
+  }
+
+  // --------- carga selects (ajustado a la pauta) ---------
+  async function cargarSelects() {
+    const [alumnos, profesores] = await Promise.all([
+      fetchJSON(api.usuariosRol('ALUMNO')),
+      fetchJSON(api.usuariosRol('PROFESOR'))
+    ]);
+
+    const sAl = document.getElementById('p-alumno');
+    const sPr = document.getElementById('p-profesor');
+    const grpProfesor = document.getElementById('grp-profesor');
+
+    // llenar combos
+    sAl.innerHTML = alumnos.map(u => `<option value="${u.id}">${u.nombre} (${u.email})</option>`).join('');
+    sPr.innerHTML = `<option value="">-- Sin profesor --</option>` +
+                    profesores.map(u => `<option value="${u.id}">${u.nombre}</option>`).join('');
+
+    // Reglas por rol (según pauta):
+    if (user.rol === 'ALUMNO') {
+      // Estudiante: sólo puede operar sobre sí mismo
+      sAl.value = String(user.id);
+      sAl.disabled = true;
+      // El profesor es opcional, pero para simplificar al estudiante no se le pide:
+      grpProfesor.classList.add('d-none');
+    } else if (user.rol === 'PROFESOR') {
+      // Profesor puede ingresar prácticas para cualquier alumno -> alumno select habilitado
+      sAl.disabled = false;
+      // Puede dejarse a sí mismo como supervisor o dejarlo vacío (opcional)
+      grpProfesor.classList.remove('d-none');
+      sPr.disabled = false;
+      sPr.value = ''; // por defecto sin profesor (o usa String(user.id) si lo quieres auto-asignado)
+    } else {
+      // ADMIN: todo habilitado
+      sAl.disabled = false;
+      grpProfesor.classList.remove('d-none');
+      sPr.disabled = false;
+    }
+  }
+
+  // --------- listado (según pauta) ---------
+  async function listar() {
+  const list = await fetchJSON('/api/practicas'); // o tu URL actual
+  const tb = document.getElementById('p-tbody');
+
+  tb.innerHTML = list.map(p => `
+    <tr>
+      <td>${p.id}</td>
+      <td>${firstName(p.alumnoNombre)}</td>
+      <td>${p.profesorNombre ? firstName(p.profesorNombre) : '-'}</td>
+      <td>${p.empresaNombre || p.empresa || ''}</td>
+      <td>${p.fechaInicio || ''}</td>
+      <td>${p.fechaFin || ''}</td>
+      <td class="text-nowrap">
+        <button class="btn btn-sm btn-primary me-1"
+          onclick='editar(${JSON.stringify(JSON.stringify(p))})'>Editar</button>
+        <button class="btn btn-sm btn-danger"
+          onclick="borrar(${p.id})">Borrar</button>
+      </td>
+    </tr>
+  `).join('');
+}
+
+
+  // (truco del doble JSON para inyectar objetos)
+  window.editar = function(pJson) {
+    // Estudiante no puede editar -> no hay botón para él, pero por seguridad:
+    if (user.rol === 'ALUMNO') return;
+
+    const p = JSON.parse(pJson);
+    editId = p.id;
+
+    document.getElementById('p-alumno').value = String(p.alumnoId);
+    document.getElementById('p-profesor').value = p.profesorId ? String(p.profesorId) : '';
+    document.getElementById('p-carrera').value = p.carrera || '';
+    document.getElementById('p-desc').value = p.descripcion || '';
+    document.getElementById('p-inicio').value = p.fechaInicio || '';
+    document.getElementById('p-fin').value = p.fechaFin || '';
+    document.getElementById('p-empresa').value = p.empresaNombre || '';
+    document.getElementById('p-emp-dir').value = p.empresaDireccion || '';
+    document.getElementById('p-emp-tel').value = p.empresaTelefono || '';
+    document.getElementById('p-jefe-nom').value = p.jefeDirectoNombre || '';
+    document.getElementById('p-jefe-ctc').value = p.jefeDirectoContacto || '';
+    toast('Modo edición', 'info');
+  }
+
+  function limpiar() {
+    editId = null;
+    // Mantener reglas por rol
+    if (user.rol !== 'ALUMNO') document.getElementById('p-alumno').value = '';
+    document.getElementById('p-profesor').value = '';
+    for (const id of ['p-carrera','p-desc','p-inicio','p-fin','p-empresa','p-emp-dir','p-emp-tel','p-jefe-nom','p-jefe-ctc']) {
+      document.getElementById(id).value = '';
+    }
+  }
+
+  async function guardar() {
+    const alumnoId = (user.rol === 'ALUMNO')
+      ? Number(user.id)
+      : Number(document.getElementById('p-alumno').value);
+
+    const profesorVal = document.getElementById('p-profesor').value;
+    const body = {
+      alumnoId,
+      profesorId: profesorVal ? Number(profesorVal) : null,
+      carrera: document.getElementById('p-carrera').value.trim(),
+      descripcion: document.getElementById('p-desc').value.trim(),
+      empresaNombre: document.getElementById('p-empresa').value.trim(),
+      empresaDireccion: document.getElementById('p-emp-dir').value.trim(),
+      empresaTelefono: document.getElementById('p-emp-tel').value.trim(),
+      jefeDirectoNombre: document.getElementById('p-jefe-nom').value.trim(),
+      jefeDirectoContacto: document.getElementById('p-jefe-ctc').value.trim(),
+      fechaInicio: document.getElementById('p-inicio').value || null,
+      fechaFin: document.getElementById('p-fin').value || null
+    };
+
+    try {
+      if (editId) {
+        // Estudiante NO puede actualizar (pauta)
+        if (user.rol === 'ALUMNO') {
+          toast('Los estudiantes no pueden actualizar prácticas.', 'warning');
+          return;
+        }
+        await fetchJSON(`${api.practicas}/${editId}`, { method:'PUT', body: JSON.stringify(body) });
+        toast('Práctica actualizada');
+      } else {
+        await fetchJSON(api.practicas, { method:'POST', body: JSON.stringify(body) });
+        toast('Práctica creada');
+      }
+      limpiar(); await listar();
+    } catch (e) { toast(e.message || 'Error', 'danger'); }
+  }
+
+  window.borrar = async function(id) {
+    // Estudiante NO puede eliminar (pauta)
+    if (user.rol === 'ALUMNO') {
+      toast('Los estudiantes no pueden eliminar prácticas.', 'warning');
+      return;
+    }
+    if (!confirm('¿Eliminar práctica?')) return;
+    try {
+      await fetchJSON(`${api.practicas}/${id}`, { method:'DELETE' });
+      toast('Práctica eliminada');
+      await listar();
+    } catch(e) { toast(e.message || 'Error', 'danger'); }
+  }
+
+    // Devuelve primer nombre (nombre de pila)
+  function firstName(n) {
+    return (n || '').trim().split(/\s+/)[0] || '-';
+  }
+  // eventos
+  document.getElementById('btn-guardar').addEventListener('click', guardar);
+  document.getElementById('btn-nuevo').addEventListener('click', limpiar);
+  document.getElementById('btn-refrescar').addEventListener('click', listar);
+
+  // init
+  (async function init(){
+    await cargarSelects();
+    await listar();
+  })();
+</script>
+</body>
+</html>
