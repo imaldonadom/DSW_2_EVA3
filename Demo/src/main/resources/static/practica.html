@@ -129,6 +129,7 @@
 
   let editId = null;
 
+  // --- helpers UI/HTTP ---
   function toast(msg, type='success') {
     const el = document.createElement('div');
     el.className = `alert alert-${type} shadow-sm`;
@@ -148,42 +149,61 @@
     return data;
   }
 
-  // selects
+  const sAl = document.getElementById('p-alumno');
+  const sPr = document.getElementById('p-profesor');
+  const grpProfesor = document.getElementById('grp-profesor');
+
+  // --- reglas de visibilidad / selects ---
   async function cargarSelects() {
     const [alumnos, profesores] = await Promise.all([
       fetchJSON(api.usuariosRol('ALUMNO')),
       fetchJSON(api.usuariosRol('PROFESOR'))
     ]);
 
-    const sAl = document.getElementById('p-alumno');
-    const sPr = document.getElementById('p-profesor');
-    const grpProfesor = document.getElementById('grp-profesor');
-
     sAl.innerHTML = alumnos.map(u => `<option value="${u.id}">${u.nombre} (${u.email})</option>`).join('');
     sPr.innerHTML = `<option value="">-- Sin profesor --</option>` +
                     profesores.map(u => `<option value="${u.id}">${u.nombre}</option>`).join('');
 
     if (user.rol === 'ALUMNO') {
+      // el alumno solo puede operar sobre sí mismo
       sAl.value = String(user.id);
       sAl.disabled = true;
-      grpProfesor.classList.add('d-none');
+      grpProfesor.classList.add('d-none'); // no se muestra profesor para alumno
     } else if (user.rol === 'PROFESOR') {
+      // profesor puede elegir alumno, pero el profesor SIEMPRE es él mismo
       sAl.disabled = false;
-      grpProfesor.classList.remove('d-none');
-      sPr.disabled = false;
-      sPr.value = '';
+      grpProfesor.classList.add('d-none');   // ocultamos el select de profesor
+      sPr.value = String(user.id);           // lo fijamos por si en algún momento lo usas
     } else {
+      // admin: todo habilitado
       sAl.disabled = false;
       grpProfesor.classList.remove('d-none');
       sPr.disabled = false;
     }
   }
 
+  // --- permisos por fila ---
+  const canModify = (p) => {
+    if (user.rol === 'ADMIN') return true;
+    if (user.rol === 'PROFESOR') return Number(p.profesorId) === Number(user.id);
+    return false; // alumno nunca edita/borra
+  };
+
+  const canSee = (p) => {
+    if (user.rol === 'ADMIN') return true;
+    if (user.rol === 'PROFESOR') return Number(p.profesorId) === Number(user.id);
+    if (user.rol === 'ALUMNO')   return Number(p.alumnoId)   === Number(user.id);
+    return false;
+  };
+
+  // --- listado con filtro por rol ---
   function firstName(n){ return (n||'').trim().split(/\s+/)[0] || '-'; }
 
   async function listar() {
-    const list = await fetchJSON('/api/practicas');
+    const all = await fetchJSON(api.practicas);
+    const list = all.filter(canSee);
     const tb = document.getElementById('p-tbody');
+
     tb.innerHTML = list.map(p => `
       <tr>
         <td>${p.id}</td>
@@ -193,23 +213,29 @@
         <td>${p.fechaInicio || ''}</td>
         <td>${p.fechaFin || ''}</td>
         <td class="text-nowrap">
-          ${user.rol!=='ALUMNO' ? `
-            <button class="btn btn-sm btn-primary me-1" data-edit='${JSON.stringify(p).replaceAll("'","&apos;")}'>Editar</button>
-            <button class="btn btn-sm btn-danger" data-del="${p.id}">Borrar</button>
-          ` : '-'}
+          ${
+            canModify(p)
+            ? `<button class="btn btn-sm btn-primary me-1" data-edit='${JSON.stringify(p).replaceAll("'","&apos;")}'>Editar</button>
+               <button class="btn btn-sm btn-danger" data-del="${p.id}">Borrar</button>`
+            : '-'
+          }
         </td>
       </tr>
     `).join('');
   }
 
+  // --- acciones por fila ---
   document.getElementById('p-tbody').addEventListener('click', async (e)=>{
     const ed = e.target.getAttribute('data-edit');
     const del= e.target.getAttribute('data-del');
-    if(ed && user.rol!=='ALUMNO'){
+
+    if (ed) {
       const p = JSON.parse(ed.replaceAll('&apos;',"'"));
+      if (!canModify(p)) { toast('No puedes editar esta práctica.','warning'); return; }
+
       editId = p.id;
-      document.getElementById('p-alumno').value    = String(p.alumnoId);
-      document.getElementById('p-profesor').value  = p.profesorId ? String(p.profesorId) : '';
+      sAl.value = String(p.alumnoId);
+      sPr.value = p.profesorId ? String(p.profesorId) : (user.rol==='PROFESOR'? String(user.id): '');
       document.getElementById('p-carrera').value   = p.carrera || '';
       document.getElementById('p-desc').value      = p.descripcion || '';
       document.getElementById('p-inicio').value    = p.fechaInicio || '';
@@ -221,28 +247,46 @@
       document.getElementById('p-jefe-ctc').value  = p.jefeDirectoContacto || '';
       toast('Modo edición','info');
     }
-    if(del && user.rol!=='ALUMNO'){
-      if(!confirm('¿Eliminar práctica?')) return;
+
+    if (del) {
+      // Traemos la fila para validar permiso antes de eliminar
+      const p = { id:Number(del) };
+      // si no tenemos profesorId en la tabla, pedimos el detalle (opcional):
+      // const p = await fetchJSON(`${api.practicas}/${del}`);
+      if (!canModify(p)) { toast('No puedes eliminar esta práctica.','warning'); return; }
+      if (!confirm('¿Eliminar práctica?')) return;
       try { await fetchJSON(`${api.practicas}/${del}`, { method:'DELETE' }); toast('Práctica eliminada'); listar(); }
       catch(e){ toast(e.message,'danger'); }
     }
   });
 
+  // --- limpiar formulario ---
   function limpiar() {
     editId = null;
-    if (user.rol !== 'ALUMNO') document.getElementById('p-alumno').value = '';
-    document.getElementById('p-profesor').value = '';
-    for (const id of ['p-carrera','p-desc','p-inicio','p-fin','p-empresa','p-emp-dir','p-emp-tel','p-jefe-nom','p-jefe-ctc']) {
-      document.getElementById(id).value = '';
-    }
+    if (user.rol !== 'ALUMNO') sAl.value = '';
+    if (user.rol === 'ADMIN')  sPr.value = '';
+    document.getElementById('p-carrera').value = '';
+    document.getElementById('p-desc').value    = '';
+    document.getElementById('p-inicio').value  = '';
+    document.getElementById('p-fin').value     = '';
+    document.getElementById('p-empresa').value = '';
+    document.getElementById('p-emp-dir').value = '';
+    document.getElementById('p-emp-tel').value = '';
+    document.getElementById('p-jefe-nom').value= '';
+    document.getElementById('p-jefe-ctc').value= '';
   }
 
+  // --- crear/actualizar con reglas por rol ---
   async function guardar() {
     const alumnoId = (user.rol === 'ALUMNO')
       ? Number(user.id)
-      : Number(document.getElementById('p-alumno').value);
+      : Number(sAl.value);
 
-    const profesorVal = document.getElementById('p-profesor').value;
+    // profesor forzado a sí mismo cuando el rol es PROFESOR
+    const profesorVal = (user.rol === 'PROFESOR')
+      ? String(user.id)
+      : sPr.value;
+
     const body = {
       alumnoId,
       profesorId: profesorVal ? Number(profesorVal) : null,
@@ -259,10 +303,14 @@
 
     try {
       if (editId) {
+        // permisos para actualizar
         if (user.rol === 'ALUMNO') { toast('Los estudiantes no pueden actualizar prácticas.','warning'); return; }
+        // Si quieres validar en cliente: solo profesor dueño o admin
+        // (opcional pedir la práctica para validar canModify con datos frescos)
         await fetchJSON(`${api.practicas}/${editId}`, { method:'PUT', body: JSON.stringify(body) });
         toast('Práctica actualizada');
       } else {
+        if (user.rol === 'ALUMNO') { toast('Los estudiantes no pueden crear prácticas.','warning'); return; }
         await fetchJSON(api.practicas, { method:'POST', body: JSON.stringify(body) });
         toast('Práctica creada');
       }
@@ -274,7 +322,11 @@
   document.getElementById('btn-nuevo').addEventListener('click', limpiar);
   document.getElementById('btn-refrescar').addEventListener('click', listar);
 
+  // INIT
   (async function init(){ await cargarSelects(); await listar(); })();
 </script>
+
+
+
 </body>
 </html>
