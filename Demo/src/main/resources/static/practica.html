@@ -10,117 +10,138 @@
   </style>
 </head>
 <body class="bg-light">
-  <div class="container py-4">
-    <div class="d-flex align-items-center justify-content-between mb-3">
-      <h3 class="m-0">Gestión de Prácticas</h3>
-      <div class="d-flex gap-2">
-        <a id="btn-admin" class="btn btn-outline-secondary d-none" href="/admin.html">← Volver a Administración</a>
-        <button id="btn-logout" class="btn btn-outline-secondary">Cerrar sesión</button>
+<div class="container py-4">
+
+  <div id="role-note" class="alert alert-warning d-none mb-3"></div>
+  <div id="alert-holder"></div>
+
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h3 class="m-0">Gestión de Prácticas</h3>
+    <button id="btn-logout" class="btn btn-outline-secondary">Cerrar sesión</button>
+  </div>
+
+  <div class="row g-3">
+    <div class="col-12 col-lg-5">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title">Nueva/Editar práctica</h5>
+
+          <div class="mb-2">
+            <label class="form-label">Alumno</label>
+            <select id="p-alumno" class="form-select"></select>
+          </div>
+
+          <div class="mb-2" id="grp-profesor">
+            <label class="form-label">Profesor supervisor (opcional)</label>
+            <select id="p-profesor" class="form-select"></select>
+          </div>
+
+          <div class="mb-2">
+            <label class="form-label">Carrera</label>
+            <input id="p-carrera" class="form-control" placeholder="Ej: Informática"/>
+          </div>
+
+          <div class="mb-2">
+            <label class="form-label">Descripción de actividades</label>
+            <textarea id="p-desc" class="form-control" rows="3"></textarea>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6 mb-2">
+              <label class="form-label">Fecha inicio</label>
+              <input type="date" id="p-inicio" class="form-control"/>
+            </div>
+            <div class="col-md-6 mb-2">
+              <label class="form-label">Fecha fin</label>
+              <input type="date" id="p-fin" class="form-control"/>
+            </div>
+          </div>
+
+          <div class="mb-2">
+            <label class="form-label">Empresa</label>
+            <input id="p-empresa" class="form-control" placeholder="Nombre empresa"/>
+          </div>
+          <div class="mb-2">
+            <input id="p-emp-dir" class="form-control" placeholder="Dirección (opcional)"/>
+          </div>
+          <div class="mb-2">
+            <input id="p-emp-tel" class="form-control" placeholder="Teléfono (opcional)"/>
+          </div>
+
+          <div class="mb-2">
+            <label class="form-label">Jefe directo (opcional)</label>
+            <input id="p-jefe-nom" class="form-control mb-2" placeholder="Nombre jefe directo"/>
+            <input id="p-jefe-ctc" class="form-control" placeholder="Contacto (teléfono/email)"/>
+          </div>
+
+          <div class="d-flex gap-2 mt-3">
+            <button id="btn-guardar" class="btn btn-primary">Guardar</button>
+            <button id="btn-nuevo" class="btn btn-outline-secondary">Nuevo</button>
+          </div>
+
+          <small class="text-muted d-block mt-2">
+            • 201 crea • 200 actualiza • 404 no existe • 400 validación
+          </small>
+        </div>
       </div>
     </div>
 
-    <div id="alert-holder"></div>
-
-    <div class="row g-3">
-      <div class="col-12 col-lg-5">
-        <div class="card shadow-sm">
-          <div class="card-body">
-            <h5 class="card-title">Nueva/Editar práctica</h5>
-
-            <div class="mb-2">
-              <label class="form-label">Alumno</label>
-              <select id="p-alumno" class="form-select"></select>
-            </div>
-
-            <div class="mb-2" id="grp-profesor">
-              <label class="form-label">Profesor supervisor (opcional)</label>
-              <select id="p-profesor" class="form-select"></select>
-            </div>
-
-            <div class="mb-2">
-              <label class="form-label">Carrera</label>
-              <input id="p-carrera" class="form-control" placeholder="Ej: Informática"/>
-            </div>
-
-            <div class="mb-2">
-              <label class="form-label">Descripción de actividades</label>
-              <textarea id="p-desc" class="form-control" rows="3"></textarea>
-            </div>
-
-            <div class="row">
-              <div class="col-md-6 mb-2">
-                <label class="form-label">Fecha inicio</label>
-                <input type="date" id="p-inicio" class="form-control"/>
-              </div>
-              <div class="col-md-6 mb-2">
-                <label class="form-label">Fecha fin</label>
-                <input type="date" id="p-fin" class="form-control"/>
-              </div>
-            </div>
-
-            <div class="mb-2">
-              <label class="form-label">Empresa</label>
-              <input id="p-empresa" class="form-control" placeholder="Nombre empresa"/>
-            </div>
-            <div class="mb-2">
-              <input id="p-emp-dir" class="form-control" placeholder="Dirección (opcional)"/>
-            </div>
-            <div class="mb-2">
-              <input id="p-emp-tel" class="form-control" placeholder="Teléfono (opcional)"/>
-            </div>
-
-            <div class="mb-2">
-              <label class="form-label">Jefe directo (opcional)</label>
-              <input id="p-jefe-nom" class="form-control mb-2" placeholder="Nombre jefe directo"/>
-              <input id="p-jefe-ctc" class="form-control" placeholder="Contacto (teléfono/email)"/>
-            </div>
-
-            <div class="d-flex gap-2 mt-3">
-              <button id="btn-guardar" class="btn btn-primary">Guardar</button>
-              <button id="btn-nuevo" class="btn btn-outline-secondary">Nuevo</button>
-            </div>
-
-            <small class="text-muted d-block mt-2">
-              • 201 crea • 200 actualiza • 404 no existe • 400 validación
-            </small>
-          </div>
-        </div>
+    <div class="col-12 col-lg-7">
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <h5 class="m-0">Listado de prácticas</h5>
+        <button class="btn btn-outline-primary btn-sm" id="btn-refrescar">Refrescar</button>
       </div>
-
-      <div class="col-12 col-lg-7">
-        <div class="d-flex justify-content-between align-items-center mb-2">
-          <h5 class="m-0">Listado de prácticas</h5>
-          <button class="btn btn-outline-primary btn-sm" id="btn-refrescar">Refrescar</button>
-        </div>
-        <div class="card shadow-sm">
-          <div class="table-responsive">
-            <table class="table table-hover m-0">
-              <thead class="table-light">
-              <tr>
-                <th>ID</th>
-                <th>Alumno</th>
-                <th>Profesor</th>
-                <th>Empresa</th>
-                <th>Inicio</th>
-                <th>Fin</th>
-                <th style="width:140px">Acciones</th>
-              </tr>
-              </thead>
-              <tbody id="p-tbody"></tbody>
-            </table>
-          </div>
+      <div class="card shadow-sm">
+        <div class="table-responsive">
+          <table class="table table-hover m-0">
+            <thead class="table-light">
+            <tr>
+              <th>ID</th>
+              <th>Alumno</th>
+              <th>Profesor</th>
+              <th>Empresa</th>
+              <th>Inicio</th>
+              <th>Fin</th>
+              <th id="th-acciones" style="width:140px">Acciones</th>
+            </tr>
+            </thead>
+            <tbody id="p-tbody"></tbody>
+          </table>
         </div>
       </div>
     </div>
   </div>
+</div>
 
 <script type="module">
   import { requireAnyRole, logout } from './js/session.js';
 
-  // sesión y rol
+  // === sesión / rol ===
   const user = requireAnyRole('ADMIN','PROFESOR','ALUMNO');
   document.getElementById('btn-logout').addEventListener('click', logout);
-  document.getElementById('btn-admin').classList.toggle('d-none', user.rol !== 'ADMIN');
+
+  // helpers
+  function toast(msg, type='danger') {
+    const el = document.createElement('div');
+    el.className = `alert alert-${type} shadow-sm`;
+    el.textContent = msg;
+    document.getElementById('alert-holder').appendChild(el);
+    setTimeout(()=> el.remove(), 3200);
+  }
+  function firstName(n){ return (n ?? '').trim().split(/\s+/)[0] || '-'; }
+
+  async function fetchJSON(url, options={}) {
+    const res = await fetch(url, {
+      headers: {'Content-Type':'application/json', ...(options.headers||{})},
+      ...options
+    });
+    if (res.status === 204) return null;
+    const data = await res.json().catch(()=> ({}));
+    if (!res.ok) {
+      throw new Error(data?.error || `HTTP ${res.status}`);
+    }
+    return data;
+  }
 
   const api = {
     usuariosRol: (rol) => `/api/usuarios/rol/${rol}`,
@@ -129,163 +150,88 @@
 
   let editId = null;
 
-  // --- helpers UI/HTTP ---
-  function toast(msg, type='success') {
-    const el = document.createElement('div');
-    el.className = `alert alert-${type} shadow-sm`;
-    el.textContent = msg;
-    document.getElementById('alert-holder').appendChild(el);
-    setTimeout(()=> el.remove(), 3000);
-  }
-
-  async function fetchJSON(url, options={}) {
-    const res = await fetch(url, {
-      headers: { 'Content-Type':'application/json', ...(options.headers||{}) },
-      ...options
-    });
-    if (res.status === 204) return null;
-    const data = await res.json().catch(()=> ({}));
-    if (!res.ok) throw new Error(data?.error || `HTTP ${res.status}`);
-    return data;
-  }
-
-  const sAl = document.getElementById('p-alumno');
-  const sPr = document.getElementById('p-profesor');
-  const grpProfesor = document.getElementById('grp-profesor');
-
-  // --- reglas de visibilidad / selects ---
   async function cargarSelects() {
     const [alumnos, profesores] = await Promise.all([
       fetchJSON(api.usuariosRol('ALUMNO')),
       fetchJSON(api.usuariosRol('PROFESOR'))
     ]);
+    const sAl = document.getElementById('p-alumno');
+    const sPr = document.getElementById('p-profesor');
+    const grpProfesor = document.getElementById('grp-profesor');
 
     sAl.innerHTML = alumnos.map(u => `<option value="${u.id}">${u.nombre} (${u.email})</option>`).join('');
     sPr.innerHTML = `<option value="">-- Sin profesor --</option>` +
                     profesores.map(u => `<option value="${u.id}">${u.nombre}</option>`).join('');
 
+    const note = document.getElementById('role-note');
+
     if (user.rol === 'ALUMNO') {
-      // el alumno solo puede operar sobre sí mismo
       sAl.value = String(user.id);
       sAl.disabled = true;
-      grpProfesor.classList.add('d-none'); // no se muestra profesor para alumno
-    } else if (user.rol === 'PROFESOR') {
-      // profesor puede elegir alumno, pero el profesor SIEMPRE es él mismo
-      sAl.disabled = false;
-      grpProfesor.classList.add('d-none');   // ocultamos el select de profesor
-      sPr.value = String(user.id);           // lo fijamos por si en algún momento lo usas
+      grpProfesor.classList.remove('d-none'); // sigue siendo opcional
+      note.classList.remove('d-none');
+      note.innerHTML = 'Nota: los <b>estudiantes</b> pueden <b>crear</b> y <b>ver</b> sus prácticas, pero <u>no</u> pueden editar ni eliminar.';
     } else {
-      // admin: todo habilitado
+      note.classList.add('d-none');
       sAl.disabled = false;
       grpProfesor.classList.remove('d-none');
-      sPr.disabled = false;
     }
   }
 
-  // --- permisos por fila ---
-  const canModify = (p) => {
-    if (user.rol === 'ADMIN') return true;
-    if (user.rol === 'PROFESOR') return Number(p.profesorId) === Number(user.id);
-    return false; // alumno nunca edita/borra
-  };
-
-  const canSee = (p) => {
-    if (user.rol === 'ADMIN') return true;
-    if (user.rol === 'PROFESOR') return Number(p.profesorId) === Number(user.id);
-    if (user.rol === 'ALUMNO')   return Number(p.alumnoId)   === Number(user.id);
-    return false;
-  };
-
-  // --- listado con filtro por rol ---
-  function firstName(n){ return (n||'').trim().split(/\s+/)[0] || '-'; }
-
   async function listar() {
-    const all = await fetchJSON(api.practicas);
-    const list = all.filter(canSee);
+    const url = (user.rol === 'ALUMNO') ? `${api.practicas}/alumno/${user.id}` : api.practicas;
+    const list = await fetchJSON(url);
     const tb = document.getElementById('p-tbody');
+    const mostrarAcciones = (user.rol !== 'ALUMNO');
+
+    document.getElementById('th-acciones').classList.toggle('d-none', !mostrarAcciones);
 
     tb.innerHTML = list.map(p => `
       <tr>
         <td>${p.id}</td>
         <td>${firstName(p.alumnoNombre)}</td>
         <td>${p.profesorNombre ? firstName(p.profesorNombre) : '-'}</td>
-        <td>${p.empresaNombre || p.empresa || ''}</td>
+        <td>${p.empresaNombre || ''}</td>
         <td>${p.fechaInicio || ''}</td>
         <td>${p.fechaFin || ''}</td>
-        <td class="text-nowrap">
-          ${
-            canModify(p)
-            ? `<button class="btn btn-sm btn-primary me-1" data-edit='${JSON.stringify(p).replaceAll("'","&apos;")}'>Editar</button>
-               <button class="btn btn-sm btn-danger" data-del="${p.id}">Borrar</button>`
-            : '-'
-          }
+        <td class="${mostrarAcciones ? '' : 'd-none'} text-nowrap">
+          <button class="btn btn-sm btn-primary me-1" onclick='editar(${JSON.stringify(JSON.stringify(p))})'>Editar</button>
+          <button class="btn btn-sm btn-danger" onclick="borrar(${p.id})">Borrar</button>
         </td>
       </tr>
     `).join('');
   }
 
-  // --- acciones por fila ---
-  document.getElementById('p-tbody').addEventListener('click', async (e)=>{
-    const ed = e.target.getAttribute('data-edit');
-    const del= e.target.getAttribute('data-del');
+  window.editar = (pJson) => {
+    if (user.rol === 'ALUMNO') return; // seguridad extra
+    const p = JSON.parse(pJson);
+    editId = p.id;
 
-    if (ed) {
-      const p = JSON.parse(ed.replaceAll('&apos;',"'"));
-      if (!canModify(p)) { toast('No puedes editar esta práctica.','warning'); return; }
+    document.getElementById('p-alumno').value = String(p.alumnoId);
+    document.getElementById('p-profesor').value = p.profesorId ? String(p.profesorId) : '';
+    document.getElementById('p-carrera').value = p.carrera || '';
+    document.getElementById('p-desc').value = p.descripcion || '';
+    document.getElementById('p-inicio').value = p.fechaInicio || '';
+    document.getElementById('p-fin').value = p.fechaFin || '';
+    document.getElementById('p-empresa').value = p.empresaNombre || '';
+    document.getElementById('p-emp-dir').value = p.empresaDireccion || '';
+    document.getElementById('p-emp-tel').value = p.empresaTelefono || '';
+    document.getElementById('p-jefe-nom').value = p.jefeDirectoNombre || '';
+    document.getElementById('p-jefe-ctc').value = p.jefeDirectoContacto || '';
+    toast('Modo edición', 'info');
+  };
 
-      editId = p.id;
-      sAl.value = String(p.alumnoId);
-      sPr.value = p.profesorId ? String(p.profesorId) : (user.rol==='PROFESOR'? String(user.id): '');
-      document.getElementById('p-carrera').value   = p.carrera || '';
-      document.getElementById('p-desc').value      = p.descripcion || '';
-      document.getElementById('p-inicio').value    = p.fechaInicio || '';
-      document.getElementById('p-fin').value       = p.fechaFin || '';
-      document.getElementById('p-empresa').value   = p.empresaNombre || '';
-      document.getElementById('p-emp-dir').value   = p.empresaDireccion || '';
-      document.getElementById('p-emp-tel').value   = p.empresaTelefono || '';
-      document.getElementById('p-jefe-nom').value  = p.jefeDirectoNombre || '';
-      document.getElementById('p-jefe-ctc').value  = p.jefeDirectoContacto || '';
-      toast('Modo edición','info');
-    }
-
-    if (del) {
-      // Traemos la fila para validar permiso antes de eliminar
-      const p = { id:Number(del) };
-      // si no tenemos profesorId en la tabla, pedimos el detalle (opcional):
-      // const p = await fetchJSON(`${api.practicas}/${del}`);
-      if (!canModify(p)) { toast('No puedes eliminar esta práctica.','warning'); return; }
-      if (!confirm('¿Eliminar práctica?')) return;
-      try { await fetchJSON(`${api.practicas}/${del}`, { method:'DELETE' }); toast('Práctica eliminada'); listar(); }
-      catch(e){ toast(e.message,'danger'); }
-    }
-  });
-
-  // --- limpiar formulario ---
   function limpiar() {
     editId = null;
-    if (user.rol !== 'ALUMNO') sAl.value = '';
-    if (user.rol === 'ADMIN')  sPr.value = '';
-    document.getElementById('p-carrera').value = '';
-    document.getElementById('p-desc').value    = '';
-    document.getElementById('p-inicio').value  = '';
-    document.getElementById('p-fin').value     = '';
-    document.getElementById('p-empresa').value = '';
-    document.getElementById('p-emp-dir').value = '';
-    document.getElementById('p-emp-tel').value = '';
-    document.getElementById('p-jefe-nom').value= '';
-    document.getElementById('p-jefe-ctc').value= '';
+    if (user.rol !== 'ALUMNO') document.getElementById('p-alumno').value = '';
+    document.getElementById('p-profesor').value = '';
+    ['p-carrera','p-desc','p-inicio','p-fin','p-empresa','p-emp-dir','p-emp-tel','p-jefe-nom','p-jefe-ctc']
+      .forEach(id => document.getElementById(id).value = '');
   }
 
-  // --- crear/actualizar con reglas por rol ---
   async function guardar() {
-    const alumnoId = (user.rol === 'ALUMNO')
-      ? Number(user.id)
-      : Number(sAl.value);
-
-    // profesor forzado a sí mismo cuando el rol es PROFESOR
-    const profesorVal = (user.rol === 'PROFESOR')
-      ? String(user.id)
-      : sPr.value;
+    const alumnoId = (user.rol === 'ALUMNO') ? Number(user.id) : Number(document.getElementById('p-alumno').value);
+    const profesorVal = document.getElementById('p-profesor').value;
 
     const body = {
       alumnoId,
@@ -303,30 +249,41 @@
 
     try {
       if (editId) {
-        // permisos para actualizar
-        if (user.rol === 'ALUMNO') { toast('Los estudiantes no pueden actualizar prácticas.','warning'); return; }
-        // Si quieres validar en cliente: solo profesor dueño o admin
-        // (opcional pedir la práctica para validar canModify con datos frescos)
+        if (user.rol === 'ALUMNO') { toast('Los estudiantes no pueden actualizar.', 'warning'); return; }
         await fetchJSON(`${api.practicas}/${editId}`, { method:'PUT', body: JSON.stringify(body) });
-        toast('Práctica actualizada');
+        toast('Práctica actualizada', 'success');
       } else {
-        if (user.rol === 'ALUMNO') { toast('Los estudiantes no pueden crear prácticas.','warning'); return; }
         await fetchJSON(api.practicas, { method:'POST', body: JSON.stringify(body) });
-        toast('Práctica creada');
+        toast('Práctica creada', 'success');
       }
       limpiar(); await listar();
-    } catch (e) { toast(e.message || 'Error', 'danger'); }
+    } catch (e) {
+      toast(e.message || 'Error', 'danger');
+    }
   }
 
+  window.borrar = async function(id){
+    if (user.rol === 'ALUMNO') { toast('Los estudiantes no pueden eliminar.', 'warning'); return; }
+    if (!confirm('¿Eliminar práctica?')) return;
+    try {
+      await fetchJSON(`${api.practicas}/${id}`, { method:'DELETE' });
+      toast('Práctica eliminada', 'success');
+      await listar();
+    } catch (e) {
+      toast(e.message || 'Error', 'danger');
+    }
+  };
+
+  // eventos
   document.getElementById('btn-guardar').addEventListener('click', guardar);
   document.getElementById('btn-nuevo').addEventListener('click', limpiar);
   document.getElementById('btn-refrescar').addEventListener('click', listar);
 
-  // INIT
-  (async function init(){ await cargarSelects(); await listar(); })();
+  // init
+  (async function init(){
+    await cargarSelects();
+    await listar();
+  })();
 </script>
-
-
-
 </body>
 </html>
